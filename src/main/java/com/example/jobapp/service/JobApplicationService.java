@@ -16,7 +16,11 @@ public class JobApplicationService {
     private final JobApplicationRepository repository;
 
     public List<JobApplication> findAll() {
-        return repository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return repository.findAll(Sort.by(Sort.Order.asc("interviewDate").nullsLast()));
+    }
+
+    public JobApplication findById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid application Id:" + id));
     }
 
     @Transactional

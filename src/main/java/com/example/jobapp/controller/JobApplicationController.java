@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/applications")
@@ -36,6 +37,23 @@ public class JobApplicationController {
         if (result.hasErrors()) {
             return "create";
         }
+        service.save(jobApplication);
+        return "redirect:/applications";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable("id") Long id, Model model) {
+        JobApplication application = service.findById(id);
+        model.addAttribute("jobApplication", application);
+        return "edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Long id, @Validated @ModelAttribute JobApplication jobApplication, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "edit";
+        }
+        jobApplication.setId(id);
         service.save(jobApplication);
         return "redirect:/applications";
     }
