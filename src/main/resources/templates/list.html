@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>応募先一覧 | Job Applications</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -29,8 +30,9 @@
                     <td>
                         <span class="status-badge" th:text="${app.status}"></span>
                     </td>
-                    <td th:text="${app.interviewDate}"></td>
-                    <td th:text="${app.memo}"></td>
+					<!-- 年と月日の間で改行し、日本語形式にする -->
+					<td th:text="${#temporals.format(app.interviewDate, 'yyyy年') + '&#10;' + #temporals.format(app.interviewDate, 'M月d日')}"></td>
+					<td class="memo-cell" th:text="${app.memo}"></td>
                     <td>
                         <a th:href="@{/applications/edit/{id}(id=${app.id})}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">編集</a>
                     </td>

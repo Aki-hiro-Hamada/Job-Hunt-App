@@ -9,7 +9,7 @@
 <body>
     <div class="container" style="max-width: 600px;">
         <div class="header">
-            <h1>応募先を編集</h1>
+            <h1>ターゲットを編集</h1>
         </div>
         
         <form th:action="@{/applications/edit/{id}(id=${jobApplication.id})}" th:object="${jobApplication}" method="post">

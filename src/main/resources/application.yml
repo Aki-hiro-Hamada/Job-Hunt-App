@@ -1,8 +1,11 @@
+server:
+  port:  8081
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/job_hunting
-    username: akihirohamada
-    password: 
+    url: jdbc:postgresql://localhost:5432/job_hunting_db
+    username: postgres
+    password: postgrestest
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
