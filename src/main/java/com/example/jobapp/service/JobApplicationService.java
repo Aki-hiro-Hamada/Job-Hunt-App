@@ -1,13 +1,15 @@
 package com.example.jobapp.service;
 
-import com.example.jobapp.entity.JobApplication;
-import com.example.jobapp.repository.JobApplicationRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.example.jobapp.entity.JobApplication;
+import com.example.jobapp.repository.JobApplicationRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -27,4 +29,9 @@ public class JobApplicationService {
     public void save(JobApplication application) {
         repository.save(application);
     }
+    
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
+
 }

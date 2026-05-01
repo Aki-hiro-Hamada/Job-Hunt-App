@@ -1,17 +1,19 @@
 package com.example.jobapp.controller;
 
-import com.example.jobapp.entity.JobApplication;
-import com.example.jobapp.service.JobApplicationService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import com.example.jobapp.entity.JobApplication;
+import com.example.jobapp.service.JobApplicationService;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/applications")
@@ -57,4 +59,10 @@ public class JobApplicationController {
         service.save(jobApplication);
         return "redirect:/applications";
     }
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id) {
+        service.deleteById(id); // サービスに削除を頼む
+        return "redirect:/applications"; // 削除が終わったら一覧画面に戻る
+    }
+
 }

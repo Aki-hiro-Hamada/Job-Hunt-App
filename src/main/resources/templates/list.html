@@ -35,7 +35,11 @@
 					<td class="memo-cell" th:text="${app.memo}"></td>
                     <td>
                         <a th:href="@{/applications/edit/{id}(id=${app.id})}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">編集</a>
-                    </td>
+						<a th:href="@{/applications/delete/{id}(id=${app.id})}" 
+						      class="btn btn-delete" 
+						      onclick="return confirm('本当にこの応募情報を駆除（削除）しますか？')"
+						      style="padding: 0.25rem 0.75rem; font-size: 0.875rem; margin-left: 5px;">削除</a>
+					</td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(applications)}">
                     <td colspan="5" style="text-align: center; color: #94a3b8; padding: 3rem;">
