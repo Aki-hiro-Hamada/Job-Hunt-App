@@ -16,4 +16,5 @@ EXPOSE 8081
 
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75.0"
 
+# server.port は application.properties の ${PORT:8081} が参照（JSON形式の ENTRYPOINT では ${} が展開されないため CLI には書かない）
 ENTRYPOINT ["java", "-jar", "app.jar"]
