@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.jobapp.entity.JobApplication;
 import com.example.jobapp.repository.JobApplicationRepository;
@@ -21,16 +20,15 @@ public class JobApplicationService {
         return repository.findAll(Sort.by(Sort.Order.asc("interviewDate").nullsLast()));
     }
 
-    public JobApplication findById(Long id) {
+    public JobApplication findById(String id) {
         return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid application Id:" + id));
     }
 
-    @Transactional
     public void save(JobApplication application) {
         repository.save(application);
     }
-    
-    public void deleteById(Long id) {
+
+    public void deleteById(String id) {
         repository.deleteById(id);
     }
 

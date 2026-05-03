@@ -44,14 +44,14 @@ public class JobApplicationController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable("id") Long id, Model model) {
+    public String editForm(@PathVariable("id") String id, Model model) {
         JobApplication application = service.findById(id);
         model.addAttribute("jobApplication", application);
         return "edit";
     }
 
     @PostMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, @Validated @ModelAttribute JobApplication jobApplication, BindingResult result, Model model) {
+    public String edit(@PathVariable("id") String id, @Validated @ModelAttribute JobApplication jobApplication, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "edit";
         }
@@ -59,10 +59,11 @@ public class JobApplicationController {
         service.save(jobApplication);
         return "redirect:/applications";
     }
+
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
-        service.deleteById(id); // サービスに削除を頼む
-        return "redirect:/applications"; // 削除が終わったら一覧画面に戻る
+    public String delete(@PathVariable("id") String id) {
+        service.deleteById(id);
+        return "redirect:/applications";
     }
 
 }
