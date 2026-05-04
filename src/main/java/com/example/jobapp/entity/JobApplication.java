@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Document(collection = "job_applications")
 @Data
@@ -23,6 +24,8 @@ public class JobApplication {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate interviewDate;
+
+    private List<JobHistory> jobHistories;
 
     private String memo;
 

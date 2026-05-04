@@ -11,6 +11,9 @@
     <div class="container">
         <div class="header">
             <h1>内定ホイホイ</h1>
+            <p class="header-meta" th:if="${ingCount != null}">
+                書類選考中: <span th:text="${ingCount}">0</span> 件
+            </p>
             <a th:href="@{/applications/create}" class="btn">＋ 新規登録</a>
         </div>
         

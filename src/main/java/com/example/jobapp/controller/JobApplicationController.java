@@ -25,6 +25,7 @@ public class JobApplicationController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("applications", service.findAll());
+        model.addAttribute("ingCount", service.getCountByStatus("書類選考中"));
         return "list";
     }
 
