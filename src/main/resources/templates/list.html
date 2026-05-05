@@ -35,23 +35,13 @@
                     </td>
 					<!-- 年と月日の間で改行し、日本語形式にする -->
 					<td th:text="${#temporals.format(app.interviewDate, 'yyyy年') + '&#10;' + #temporals.format(app.interviewDate, 'M月d日')}"></td>
-					<td class="memo-cell">
-                        <div th:text="${app.memo}"></div>
-                        <a th:if="${app.websiteUrl != null and !#strings.isEmpty(app.websiteUrl)}"
-                           th:href="${app.websiteUrl.startsWith('http') ? app.websiteUrl : 'https://' + app.websiteUrl}"
-                           target="_blank" rel="noopener noreferrer">企業ページ</a>
-                    </td>
+					<td class="memo-cell" th:text="${app.memo}"></td>
                     <td>
                         <a th:href="@{/applications/edit/{id}(id=${app.id})}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">編集</a>
 						<a th:href="@{/applications/delete/{id}(id=${app.id})}" 
 						      class="btn btn-delete" 
 						      onclick="return confirm('本当にこの応募情報を駆除（削除）しますか？')"
 						      style="padding: 0.25rem 0.75rem; font-size: 0.875rem; margin-left: 5px;">削除</a>
-                        <form th:action="@{/applications/{id}/history(id=${app.id})}" method="post" style="margin-top: 0.5rem;">
-                            <input type="date" name="eventDate" required>
-                            <input type="text" name="action" placeholder="アクション（例：応募）" required>
-                            <button type="submit">履歴を追加</button>
-                        </form>
 					</td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(applications)}">
