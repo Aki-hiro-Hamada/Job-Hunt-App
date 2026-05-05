@@ -25,6 +25,8 @@ public class JobApplication {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate interviewDate;
 
+    private String websiteUrl;
+
     private List<JobHistory> jobHistories;
 
     private String memo;

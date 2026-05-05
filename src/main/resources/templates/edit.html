@@ -12,7 +12,7 @@
             <h1>ターゲットを編集</h1>
         </div>
         
-        <form th:action="@{/applications/edit/{id}(id=${jobApplication.id})}" th:object="${jobApplication}" method="post">
+        <form th:action="@{/applications/edit/{id}(id=${jobForm.id})}" th:object="${jobForm}" method="post">
             <input type="hidden" th:field="*{id}" />
             <div class="form-group">
                 <label for="companyName">会社名 <span style="color: var(--danger-color);">*</span></label>
@@ -39,11 +39,19 @@
             <div class="form-group">
                 <label for="interviewDate">面接日</label>
                 <input type="date" id="interviewDate" th:field="*{interviewDate}">
+                <span class="error-message" th:if="${#fields.hasErrors('interviewDate')}" th:errors="*{interviewDate}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="websiteUrl">企業URL</label>
+                <input type="text" id="websiteUrl" th:field="*{websiteUrl}" placeholder="https://example.com/careers">
+                <span class="error-message" th:if="${#fields.hasErrors('websiteUrl')}" th:errors="*{websiteUrl}"></span>
             </div>
             
             <div class="form-group">
                 <label for="memo">メモ</label>
                 <textarea id="memo" th:field="*{memo}" rows="4" placeholder="特記事項や準備することなど..."></textarea>
+                <span class="error-message" th:if="${#fields.hasErrors('memo')}" th:errors="*{memo}"></span>
             </div>
             
             <div class="actions">
