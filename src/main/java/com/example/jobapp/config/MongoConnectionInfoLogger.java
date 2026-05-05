@@ -1,5 +1,6 @@
 package com.example.jobapp.config;
 
+import java.net.URI;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -26,8 +27,39 @@ public class MongoConnectionInfoLogger implements ApplicationRunner {
     @Value("${spring.data.mongodb.database:}")
     private String mongoDatabase;
 
+    private static String safeHostSummary(String uri) {
+        if (uri == null || uri.isBlank()) return "";
+
+        // mongodb+srv は java.net.URI で host が取れないことがあるため ConnectionString を優先
+        try {
+            ConnectionString cs = new ConnectionString(uri);
+            if (cs.getHosts() != null && !cs.getHosts().isEmpty()) {
+                return cs.getHosts().stream().collect(Collectors.joining(","));
+            }
+        } catch (Exception ignored) {
+            // fallthrough
+        }
+
+        try {
+            URI u = URI.create(uri);
+            return u.getHost() == null ? "" : u.getHost();
+        } catch (Exception ignored) {
+            return "";
+        }
+    }
+
     @Override
     public void run(ApplicationArguments args) {
+        // Render 側の設定値がアプリ内で見えているか（秘密情報は出さない）
+        String envMongo = System.getenv("MONGODB_URI");
+        String envSpringMongo = System.getenv("SPRING_DATA_MONGODB_URI");
+        log.info("MongoDB env presence: MONGODB_URI={}, SPRING_DATA_MONGODB_URI={}",
+                (envMongo != null && !envMongo.isBlank()),
+                (envSpringMongo != null && !envSpringMongo.isBlank()));
+        log.info("MongoDB env host summary: MONGODB_URI=[{}], SPRING_DATA_MONGODB_URI=[{}]",
+                safeHostSummary(envMongo),
+                safeHostSummary(envSpringMongo));
+
         if (mongoUri == null || mongoUri.isBlank()) {
             log.warn("MongoDB: spring.data.mongodb.uri is empty. (Embedded Mongo may be used depending on runtime)");
             return;
