@@ -37,7 +37,7 @@
             </div>
             
             <div class="form-group">
-                <label for="interviewDate">面接日</label>
+                <label for="interviewDate">日付</label>
                 <input type="date" id="interviewDate" th:field="*{interviewDate}">
             </div>
             
@@ -51,6 +51,49 @@
                 <a th:href="@{/applications}" class="btn btn-secondary">キャンセル</a>
             </div>
         </form>
+
+        <hr style="margin: 2rem 0; border-color: rgba(255, 215, 0, 0.3);">
+
+        <h2 style="margin-top: 0;">履歴を追加</h2>
+        <form th:action="@{/applications/{id}/history(id=${jobApplication.id})}" method="post">
+            <div class="form-group">
+                <label for="action">ステータス <span style="color: var(--danger-color);">*</span></label>
+                <select id="action" name="action" required>
+                    <option value="">選択してください</option>
+                    <option value="応募前">応募前</option>
+                    <option value="書類選考中">書類選考中</option>
+                    <option value="一次面接">一次面接</option>
+                    <option value="二次面接">二次面接</option>
+                    <option value="最終面接">最終面接</option>
+                    <option value="内定">内定</option>
+                    <option value="お見送り">お見送り</option>
+                    <option value="辞退">辞退</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="eventDate">日付</label>
+                <input type="date" id="eventDate" name="eventDate">
+            </div>
+
+            <div class="form-group">
+                <label for="note">メモ</label>
+                <textarea id="note" name="note" rows="3" placeholder="当日の内容・気づき"></textarea>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn">履歴を追加</button>
+                <a th:href="@{/applications}" class="btn btn-secondary">一覧に戻る</a>
+            </div>
+        </form>
+
+        <div th:if="${jobApplication.jobHistories != null and !#lists.isEmpty(jobApplication.jobHistories)}" style="margin-top: 1.5rem;">
+            <h3>登録済み履歴</h3>
+            <div th:each="h : ${jobApplication.jobHistories}" style="border-top: 1px solid rgba(255, 215, 0, 0.2); padding: 0.7rem 0;">
+                <div style="font-weight: 700;" th:text="${#temporals.format(h.eventDate, 'yyyy年M月d日') + ' - ' + h.action}"></div>
+                <div th:if="${h.note != null and !#strings.isEmpty(h.note)}" style="opacity: 0.9;" th:text="${h.note}"></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

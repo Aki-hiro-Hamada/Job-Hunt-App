@@ -27,6 +27,10 @@ public class JobApplicationService {
     }
 
     public void save(JobApplication application) {
+        if (application.getId() != null && application.getJobHistories() == null) {
+            repository.findById(application.getId())
+                    .ifPresent(existing -> application.setJobHistories(existing.getJobHistories()));
+        }
         repository.save(application);
     }
 

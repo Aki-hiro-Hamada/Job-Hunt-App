@@ -187,6 +187,22 @@ tr {
     height: auto !important;
 }
 
+.memo-cell p {
+    margin: 0 0 0.35rem 0;
+}
+
+.history-note {
+    margin: 0.18rem 0;
+    padding-left: 0.35rem;
+    border-left: 2px solid rgba(255, 215, 0, 0.45);
+    font-size: 0.88rem;
+}
+
+.history-date {
+    font-weight: 700;
+    color: #ffd700;
+}
+
 /* 削除ボタンのスタイル */
 .btn-delete {
     background-color: #4b5563 !important; /* 渋いグレー（駆除ボタン） */
@@ -201,17 +217,58 @@ tr {
     transform: scale(1.05);
 }
 
-/* 操作列（5列目）：ボタンを横並びに固定する */
+/* 操作列（5列目）：ボタンと履歴フォームをセル内に収める */
 td:nth-child(5) {
-    white-space: nowrap !important; /* 改行を絶対に許さない */
-    min-width: 140px;               /* ボタン2つが並ぶ幅を確保 */
-    text-align: center;
-    vertical-align: middle;
+    min-width: 240px;
+    text-align: left;
+    vertical-align: top;
+    white-space: normal !important;
 }
 
-/* ボタン同士の微調整 */
-.btn-secondary, .btn-delete {
-    display: inline-block !important; /* 横に並ぶ要素にする */
-    margin: 2px !important;           /* ボタン同士の隙間を作る */
-    vertical-align: middle;           /* ボタンの高さを揃える */
+.action-cell {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.action-btn {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.82rem;
+    line-height: 1.2;
+}
+
+.history-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    max-width: 100%;
+}
+
+.history-form input {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.82rem;
+}
+
+.history-submit {
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.82rem;
+    text-transform: none;
+}
+
+.company-link {
+    color: #fde047;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.company-link:hover {
+    color: #fef08a;
 }
