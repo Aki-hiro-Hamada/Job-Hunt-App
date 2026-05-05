@@ -27,6 +27,25 @@ public class MongoConnectionInfoLogger implements ApplicationRunner {
     @Value("${spring.data.mongodb.database:}")
     private String mongoDatabase;
 
+    private static String safeUriDiagnostic(String uri) {
+        if (uri == null || uri.isBlank()) return "empty";
+
+        // パスワード等は出さない。できる範囲で scheme と host/clusterを示す
+        try {
+            ConnectionString cs = new ConnectionString(uri);
+            boolean srv = uri.startsWith("mongodb+srv://");
+            String hosts = cs.getHosts() == null ? "" : cs.getHosts().stream().collect(Collectors.joining(","));
+            boolean looksLocalhost = hosts.contains("127.0.0.1") || hosts.contains("localhost");
+            return String.format("{scheme=mongodb%s,hosts=[%s],looksLocal=%s}",
+                    srv ? "+srv" : "",
+                    hosts,
+                    looksLocalhost);
+        } catch (Exception ignored) {
+            boolean looksMalformed = !(uri.startsWith("mongodb://") || uri.startsWith("mongodb+srv://"));
+            return "{unparseable=" + looksMalformed + "}";
+        }
+    }
+
     private static String safeHostSummary(String uri) {
         if (uri == null || uri.isBlank()) return "";
 
@@ -59,6 +78,7 @@ public class MongoConnectionInfoLogger implements ApplicationRunner {
         log.info("MongoDB env host summary: MONGODB_URI=[{}], SPRING_DATA_MONGODB_URI=[{}]",
                 safeHostSummary(envMongo),
                 safeHostSummary(envSpringMongo));
+        log.info("MongoDB spring binding (sanitized): spring.data.mongodb.uri={}", safeUriDiagnostic(mongoUri));
 
         if (mongoUri == null || mongoUri.isBlank()) {
             log.warn("MongoDB: spring.data.mongodb.uri is empty. (Embedded Mongo may be used depending on runtime)");
