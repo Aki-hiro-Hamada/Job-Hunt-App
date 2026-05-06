@@ -48,6 +48,15 @@ public class JobApplicationController {
         return "create";
     }
 
+    /**
+     * 旧URL互換（デプロイ差分やブックマーク対策）。
+     * /applications/new を /applications/create に寄せます。
+     */
+    @GetMapping("/new")
+    public String newFormCompat() {
+        return "redirect:/applications/create";
+    }
+
     @PostMapping("/create")
     public String create(@Validated @ModelAttribute JobApplication jobApplication, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -74,7 +83,15 @@ public class JobApplicationController {
         return "redirect:/applications";
     }
 
+    /**
+     * 削除は GET で副作用を起こさない（リンクを踏んだだけで消える事故を防ぐ）。
+     */
     @GetMapping("/delete/{id}")
+    public String deleteGetCompat(@PathVariable("id") String id) {
+        return "redirect:/applications";
+    }
+
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") String id) {
         service.deleteById(id);
         return "redirect:/applications";
