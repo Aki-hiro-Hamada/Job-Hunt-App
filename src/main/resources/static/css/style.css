@@ -220,7 +220,7 @@ tr {
 /* 操作列（5列目）：ボタンと履歴フォームをセル内に収める */
 td:nth-child(5) {
     min-width: 240px;
-    text-align: left;
+    text-align: center;
     vertical-align: top;
     white-space: normal !important;
 }
@@ -235,6 +235,7 @@ td:nth-child(5) {
     flex-wrap: wrap;
     gap: 0.4rem;
     margin-bottom: 0.6rem;
+    justify-content: center;
 }
 
 .action-btn {
