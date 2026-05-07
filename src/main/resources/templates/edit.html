@@ -13,6 +13,7 @@
         </div>
         
         <form th:action="@{/applications/edit/{id}(id=${jobApplication.id})}" th:object="${jobApplication}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="hidden" th:field="*{id}" />
             <div class="form-group">
                 <label for="companyName">会社名 <span style="color: var(--danger-color);">*</span></label>
@@ -56,6 +57,7 @@
 
         <h2 style="margin-top: 0;">履歴を追加</h2>
         <form th:action="@{/applications/{id}/history(id=${jobApplication.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <div class="form-group">
                 <label for="action">ステータス <span style="color: var(--danger-color);">*</span></label>
                 <select id="action" name="action" required>

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.Principal;
+
 import com.example.jobapp.entity.JobApplication;
 import com.example.jobapp.entity.JobHistory;
 import com.example.jobapp.service.JobApplicationService;
@@ -29,15 +31,16 @@ public class JobApplicationController {
     private final JobApplicationService service;
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("applications", service.findAll());
-        model.addAttribute("ingCount", service.getCountByStatus("書類選考中"));
+    public String list(Model model, Principal principal) {
+        String userId = principal.getName();
+        model.addAttribute("applications", service.findAll(userId));
+        model.addAttribute("ingCount", service.getCountByStatus(userId, "書類選考中"));
         return "list";
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable("id") String id, Model model) {
-        JobApplication application = service.findById(id);
+    public String detail(@PathVariable("id") String id, Model model, Principal principal) {
+        JobApplication application = service.findById(principal.getName(), id);
         model.addAttribute("jobApplication", application);
         return "detail";
     }
@@ -58,28 +61,35 @@ public class JobApplicationController {
     }
 
     @PostMapping("/create")
-    public String create(@Validated @ModelAttribute JobApplication jobApplication, BindingResult result, Model model) {
+    public String create(@Validated @ModelAttribute JobApplication jobApplication,
+                         BindingResult result,
+                         Model model,
+                         Principal principal) {
         if (result.hasErrors()) {
             return "create";
         }
-        service.save(jobApplication);
+        service.save(principal.getName(), jobApplication);
         return "redirect:/applications";
     }
 
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable("id") String id, Model model) {
-        JobApplication application = service.findById(id);
+    public String editForm(@PathVariable("id") String id, Model model, Principal principal) {
+        JobApplication application = service.findById(principal.getName(), id);
         model.addAttribute("jobApplication", application);
         return "edit";
     }
 
     @PostMapping("/edit/{id}")
-    public String edit(@PathVariable("id") String id, @Validated @ModelAttribute JobApplication jobApplication, BindingResult result, Model model) {
+    public String edit(@PathVariable("id") String id,
+                       @Validated @ModelAttribute JobApplication jobApplication,
+                       BindingResult result,
+                       Model model,
+                       Principal principal) {
         if (result.hasErrors()) {
             return "edit";
         }
         jobApplication.setId(id);
-        service.save(jobApplication);
+        service.save(principal.getName(), jobApplication);
         return "redirect:/applications";
     }
 
@@ -92,14 +102,14 @@ public class JobApplicationController {
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") String id) {
-        service.deleteById(id);
+    public String delete(@PathVariable("id") String id, Principal principal) {
+        service.deleteById(principal.getName(), id);
         return "redirect:/applications";
     }
 
     @PostMapping("/{id}/history")
-    public String addHistory(@PathVariable("id") String id, @ModelAttribute JobHistory newHistory) {
-        service.addHistory(id, newHistory);
+    public String addHistory(@PathVariable("id") String id, @ModelAttribute JobHistory newHistory, Principal principal) {
+        service.addHistory(principal.getName(), id, newHistory);
         return "redirect:/applications/edit/" + id;
     }
 
@@ -109,10 +119,10 @@ public class JobApplicationController {
      */
     @GetMapping("/api/applications")
     @ResponseBody
-    public ResponseEntity<List<JobApplication>> apiApplications() {
+    public ResponseEntity<List<JobApplication>> apiApplications(Principal principal) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
-                .body(service.findAll());
+                .body(service.findAll(principal.getName()));
     }
 
     /**
@@ -120,11 +130,11 @@ public class JobApplicationController {
      */
     @GetMapping("/api/applications/{id}")
     @ResponseBody
-    public ResponseEntity<JobApplication> apiApplication(@PathVariable("id") String id) {
+    public ResponseEntity<JobApplication> apiApplication(@PathVariable("id") String id, Principal principal) {
         try {
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.noStore())
-                    .body(service.findById(id));
+                    .body(service.findById(principal.getName(), id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound()
                     .cacheControl(CacheControl.noStore())

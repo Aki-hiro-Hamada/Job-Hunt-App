@@ -16,6 +16,12 @@ public class JobApplication {
     @Id
     private String id;
 
+    /**
+     * 所有者（ログインユーザー）のユーザー名。
+     * このフィールドで全クエリをスコープし、他ユーザーのデータに到達できないようにする。
+     */
+    private String ownerUserId;
+
     @NotBlank(message = "会社名は必須です")
     private String companyName;
 
