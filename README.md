@@ -27,6 +27,70 @@
 - MongoDB（MongoDB Atlas）
 - Render（Dockerでデプロイ）
 
+## データ設計（RDB/SQLで表すと）
+
+本アプリは MongoDB（ドキュメントDB）で実装していますが、RDB（PostgreSQL等）で表すと以下の関係になります。
+
+### ER（関係）
+
+- `users`（ユーザー）
+  - 1人のユーザーは複数の応募を持つ（1:N）
+- `job_applications`（応募）
+  - 1つの応募は複数の履歴を持つ（1:N）
+- `job_histories`（応募履歴）
+
+```
+users (1) ──< (N) job_applications (1) ──< (N) job_histories
+```
+
+### PostgreSQL想定DDL（例）
+
+```sql
+-- users
+create table users (
+  id            bigserial primary key,
+  username      varchar(64) not null unique,
+  password_hash text        not null,
+  created_at    timestamptz not null default now()
+);
+
+-- job applications
+create table job_applications (
+  id              bigserial primary key,
+  owner_user_id   bigint      not null references users(id) on delete cascade,
+  company_name    text        not null,
+  status          text        not null,
+  interview_date  date,
+  memo            text,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now()
+);
+
+create index idx_job_applications_owner_interview_date
+  on job_applications (owner_user_id, interview_date);
+
+create index idx_job_applications_owner_status
+  on job_applications (owner_user_id, status);
+
+-- job histories
+create table job_histories (
+  id                 bigserial primary key,
+  job_application_id bigint      not null references job_applications(id) on delete cascade,
+  event_date         date,
+  action             text        not null,
+  note               text,
+  created_at         timestamptz not null default now()
+);
+
+create index idx_job_histories_application_event_date
+  on job_histories (job_application_id, event_date);
+```
+
+補足:
+
+- 実装（MongoDB）では `job_histories` は別テーブルではなく、`job_applications` の配列として埋め込み（サブドキュメント）で保持しています。
+- 認可（Authorization）として、応募データは常に「ログイン中ユーザーの所有データ」にスコープする前提（RDBなら `owner_user_id`、Mongoなら `ownerUserId`）です。
+
 ## 環境変数（MongoDB）
 
 MongoDB接続URIを以下のどちらかで設定してください（どちらか1つでOK）。
