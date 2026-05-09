@@ -228,6 +228,8 @@ th {
 
 /* --- フォーム関連（選択肢が見えるように修正） --- */
 input, select, textarea {
+    box-sizing: border-box;
+    display: block;
     width: 100%;
     padding: 0.75rem;
     border-radius: 4px;
@@ -236,9 +238,44 @@ input, select, textarea {
     color: #ffffff !important;
 }
 
+/* form-group 配下の幅を確実に統一（edit/create で面一にする） */
+.form-group {
+    width: 100%;
+}
+
+.form-group > input,
+.form-group > select,
+.form-group > textarea,
+.form-group > .date-split {
+    width: 100%;
+    max-width: 100%;
+}
+
 select option {
     background-color: #061c0f; /* 選択肢の背景を深い緑に固定 */
     color: #ffffff;
+}
+
+/* --- 日付入力（年月日3分割で挙動統一） --- */
+.date-split {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+}
+
+.date-split input {
+    flex: 1 1 0;
+    text-align: center;
+}
+
+.date-split input[data-date-part="year"] {
+    flex: 1.4 1 0;
+}
+
+.date-split .date-sep {
+    opacity: 0.85;
+    white-space: nowrap;
 }
 
 /* テーブル（フォーム画面など一覧以外）：共通の罫線・セルスタイル */
