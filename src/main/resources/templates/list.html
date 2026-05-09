@@ -13,9 +13,6 @@
     <div class="container">
         <div class="header">
             <h1>内定ホイホイ</h1>
-            <p class="header-meta" th:if="${ingCount != null}">
-                書類選考中: <span id="ingCountValue" th:text="${ingCount}">0</span> 件
-            </p>
             <div style="display:flex; gap: 0.5rem; align-items:center; justify-content:flex-end;">
                 <a th:href="@{/applications/create}" class="btn">＋ 新規登録</a>
                 <form th:action="@{/logout}" method="post" style="display:inline;">
@@ -92,9 +89,8 @@
         (function () {
             const POLL_INTERVAL_MS = 5000;
             const tbody = document.getElementById('applications-tbody');
-            const ingCountEl = document.getElementById('ingCountValue');
 
-            if (!tbody || !ingCountEl) return;
+            if (!tbody) return;
 
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || '';
             const csrfParam = document.querySelector('meta[name="_csrf_parameter"]')?.getAttribute('content') || '_csrf';
@@ -215,7 +211,6 @@
 
             const render = (apps) => {
                 const list = Array.isArray(apps) ? apps : [];
-                ingCountEl.textContent = list.filter((a) => a.status === '書類選考中').length;
 
                 if (list.length === 0) {
                     tbody.innerHTML = `

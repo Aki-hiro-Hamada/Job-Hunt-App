@@ -86,6 +86,13 @@ h1 {
     text-align: center;
 }
 
+.login-page input[type="text"],
+.login-page input[type="password"] {
+    box-sizing: border-box;
+    display: block;
+    max-width: 100%;
+}
+
 .login-register-row {
     margin-top: 1rem;
 }
@@ -163,20 +170,25 @@ th {
     vertical-align: top;
 }
 
+.applications-table th:nth-child(1),
 .applications-table td:nth-child(1) {
     word-wrap: break-word;
     overflow-wrap: break-word;
+    text-align: left;
+    vertical-align: middle;
 }
 
 .applications-table td:nth-child(2) {
     text-align: center;
     white-space: nowrap;
+    vertical-align: middle;
 }
 
 .applications-table td:nth-child(3) {
     white-space: pre-line;
     text-align: center;
     font-size: 0.95rem;
+    vertical-align: middle;
 }
 
 .memo-cell {
@@ -191,8 +203,8 @@ th {
 .applications-table .memo-cell-inner {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
     overflow: hidden;
     overflow-wrap: break-word;
     word-break: break-word;
@@ -298,7 +310,7 @@ tr {
     min-width: 200px;
     max-width: 200px;
     text-align: center;
-    vertical-align: top;
+    vertical-align: middle;
     white-space: normal !important;
 }
 
@@ -345,6 +357,7 @@ tr {
     font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 2px;
+    display: inline;
 }
 
 .company-link:hover {

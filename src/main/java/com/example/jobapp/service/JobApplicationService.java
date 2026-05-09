@@ -2,6 +2,9 @@ package com.example.jobapp.service;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,7 +22,34 @@ public class JobApplicationService {
     private final JobApplicationRepository repository;
 
     public List<JobApplication> findAll(String ownerUserId) {
-        return repository.findAllByOwnerUserId(ownerUserId, Sort.by(Sort.Order.asc("interviewDate").nullsLast()));
+        // 表示順: 1) ステータス順 2) 日付順（null は最後）
+        // MongoDB の Sort だけだと「日本語ステータスの任意順」を表現しづらいので、アプリ側で並べ替える。
+        List<JobApplication> list = repository.findAllByOwnerUserId(ownerUserId, Sort.unsorted());
+
+        List<String> statusOrder = List.of(
+                "応募前",
+                "書類選考中",
+                "一次面接",
+                "二次面接",
+                "最終面接",
+                "内定",
+                "お見送り",
+                "辞退"
+        );
+        Map<String, Integer> statusRank = statusOrder.stream()
+                .collect(Collectors.toMap(s -> s, statusOrder::indexOf));
+
+        Comparator<JobApplication> byStatus = Comparator.comparingInt(app ->
+                statusRank.getOrDefault(app.getStatus(), Integer.MAX_VALUE)
+        );
+        Comparator<JobApplication> byDate = Comparator.comparing(
+                JobApplication::getInterviewDate,
+                Comparator.nullsLast(Comparator.naturalOrder())
+        );
+
+        return list.stream()
+                .sorted(byStatus.thenComparing(byDate))
+                .toList();
     }
 
     public JobApplication findById(String ownerUserId, String id) {
