@@ -39,14 +39,7 @@
             
             <div class="form-group">
                 <label for="interviewDate">日付</label>
-                <input type="hidden" id="interviewDate" th:field="*{interviewDate}">
-                <div class="date-split" data-date-split="true" data-hidden-id="interviewDate" aria-label="日付">
-                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="年" maxlength="4" data-date-part="year" aria-label="年">
-                    <span class="date-sep">/</span>
-                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="月" maxlength="2" data-date-part="month" aria-label="月">
-                    <span class="date-sep">/</span>
-                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="日" maxlength="2" data-date-part="day" aria-label="日">
-                </div>
+                <input type="date" id="interviewDate" th:field="*{interviewDate}">
             </div>
             
             <div class="form-group">
@@ -82,14 +75,7 @@
 
             <div class="form-group">
                 <label for="eventDate">日付</label>
-                <input type="hidden" id="eventDate" name="eventDate">
-                <div class="date-split" data-date-split="true" data-hidden-id="eventDate" aria-label="日付">
-                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="年" maxlength="4" data-date-part="year" aria-label="年">
-                    <span class="date-sep">/</span>
-                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="月" maxlength="2" data-date-part="month" aria-label="月">
-                    <span class="date-sep">/</span>
-                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="日" maxlength="2" data-date-part="day" aria-label="日">
-                </div>
+                <input type="date" id="eventDate" name="eventDate">
             </div>
 
             <div class="form-group">
@@ -112,6 +98,5 @@
         </div>
     </div>
 
-    <script th:src="@{/js/date-split.js}"></script>
 </body>
 </html>

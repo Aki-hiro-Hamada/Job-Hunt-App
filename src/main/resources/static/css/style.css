@@ -241,41 +241,30 @@ input, select, textarea {
 /* form-group 配下の幅を確実に統一（edit/create で面一にする） */
 .form-group {
     width: 100%;
+    margin-bottom: 1rem;
 }
 
 .form-group > input,
 .form-group > select,
-.form-group > textarea,
-.form-group > .date-split {
-    width: 100%;
-    max-width: 100%;
+.form-group > textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.actions {
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
 }
 
 select option {
     background-color: #061c0f; /* 選択肢の背景を深い緑に固定 */
     color: #ffffff;
-}
-
-/* --- 日付入力（年月日3分割で挙動統一） --- */
-.date-split {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    width: 100%;
-}
-
-.date-split input {
-    flex: 1 1 0;
-    text-align: center;
-}
-
-.date-split input[data-date-part="year"] {
-    flex: 1.4 1 0;
-}
-
-.date-split .date-sep {
-    opacity: 0.85;
-    white-space: nowrap;
 }
 
 /* テーブル（フォーム画面など一覧以外）：共通の罫線・セルスタイル */
