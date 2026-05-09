@@ -53,13 +53,16 @@
 					<!-- 年と月日の間で改行し、日本語形式にする -->
 					<td th:text="${#temporals.format(app.interviewDate, 'yyyy年') + '&#10;' + #temporals.format(app.interviewDate, 'M月d日')}"></td>
 					<td class="memo-cell">
-                        <p th:if="${app.memo != null and !#strings.isEmpty(app.memo)}" th:text="${app.memo}"></p>
-                        <div th:if="${app.jobHistories != null and !#lists.isEmpty(app.jobHistories)}">
-                            <p th:each="h : ${app.jobHistories}" class="history-note">
-                                <span class="history-date" th:text="${#temporals.format(h.eventDate, 'yyyy/MM/dd')}"></span>
-                                <span th:text="${' ' + h.action}"></span>
-                                <span th:if="${h.note != null and !#strings.isEmpty(h.note)}" th:text="${' - ' + h.note}"></span>
-                            </p>
+                        <div class="memo-cell-inner"
+                             th:if="${(app.memo != null and !#strings.isEmpty(app.memo)) or (app.jobHistories != null and !#lists.isEmpty(app.jobHistories))}">
+                            <p th:if="${app.memo != null and !#strings.isEmpty(app.memo)}" th:text="${app.memo}"></p>
+                            <div th:if="${app.jobHistories != null and !#lists.isEmpty(app.jobHistories)}">
+                                <p th:each="h : ${app.jobHistories}" class="history-note">
+                                    <span class="history-date" th:text="${#temporals.format(h.eventDate, 'yyyy/MM/dd')}"></span>
+                                    <span th:text="${' ' + h.action}"></span>
+                                    <span th:if="${h.note != null and !#strings.isEmpty(h.note)}" th:text="${' - ' + h.note}"></span>
+                                </p>
+                            </div>
                         </div>
                     </td>
                     <td class="action-cell">
@@ -177,6 +180,9 @@
                 const historiesBlock = (memoHtml || historiesHtml)
                     ? `${memoHtml}${historiesHtml}`
                     : '';
+                const memoCellBody = historiesBlock
+                    ? `<div class="memo-cell-inner">${historiesBlock}</div>`
+                    : '';
 
                 return `
                     <tr>
@@ -188,7 +194,7 @@
                         </td>
                         <td>${interviewHtml}</td>
                         <td class="memo-cell">
-                            ${historiesBlock}
+                            ${memoCellBody}
                         </td>
                         <td class="action-cell">
                             <div class="action-buttons">

@@ -187,6 +187,18 @@ th {
     line-height: 1.5;
 }
 
+/* 一覧メモのみ最大5行（td は通常の表セルのまま／詳細は会社クリック先） */
+.applications-table .memo-cell-inner {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
 /* --- ステータスバッジ（色分け） --- */
 .status-badge {
     padding: 0.25rem 0.75rem;
