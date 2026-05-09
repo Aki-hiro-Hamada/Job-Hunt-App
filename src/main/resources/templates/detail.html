@@ -20,7 +20,7 @@
                     ステータス: <span th:text="${jobApplication.status}"></span>
                 </p>
                 <p style="margin: 0.2rem 0;" th:if="${jobApplication.interviewDate != null}">
-                    面接日: <span th:text="${#temporals.format(jobApplication.interviewDate, 'yyyy年M月d日')}"></span>
+                    日付: <span th:text="${#temporals.format(jobApplication.interviewDate, 'yyyy年M月d日')}"></span>
                 </p>
                 <p style="margin: 0.4rem 0 0;" th:if="${jobApplication.memo != null and !#strings.isEmpty(jobApplication.memo)}"
                    th:text="${jobApplication.memo}"></p>
@@ -96,7 +96,7 @@
                 const jobHistories = Array.isArray(app.jobHistories) ? app.jobHistories : [];
 
                 const interviewLine = interviewDate
-                    ? `<p style="margin: 0.2rem 0;">面接日: <span>${formatJPDate(interviewDate)}</span></p>`
+                    ? `<p style="margin: 0.2rem 0;">日付: <span>${formatJPDate(interviewDate)}</span></p>`
                     : '';
 
                 const memoLine = (memo != null && String(memo).trim().length > 0)

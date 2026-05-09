@@ -65,6 +65,31 @@ h1 {
     margin-bottom: 2rem;
 }
 
+/* --- ログイン画面 --- */
+.login-header {
+    justify-content: flex-start;
+}
+
+.login-title {
+    white-space: nowrap;
+    margin: 0;
+    font-size: clamp(1.85rem, 5.2vw, 3.5rem);
+    line-height: 1.15;
+}
+
+.login-page .login-main-btn,
+.login-page .login-register-btn {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.login-register-row {
+    margin-top: 1rem;
+}
+
 /* --- ボタン関連 --- */
 .btn {
     display: inline-block;
@@ -92,36 +117,74 @@ h1 {
     border: none !important;
 }
 
+.btn-secondary:hover {
+    background: var(--edit-hover) !important;
+    color: #061c0f !important;
+}
+
 /* --- テーブル関連 --- */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-th, td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-    vertical-align: middle;
-}
-
 th {
     color: #ffd700;
     font-weight: 800;
 }
 
-/* 改行・省略設定 */
-td:nth-child(1) { min-width: 150px; word-wrap: break-word; }
-td:nth-child(2) { width: 100px; text-align: center; min-width: 120px !important; white-space: nowrap !important;}
-td:nth-child(3) { white-space: pre-wrap !important; width: 100px; text-align: center; font-size: 0.95rem; }
+/* 一覧テーブル：列幅をコンテンツに依存させず、メモが横に膨らまないようにする */
+.applications-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.applications-table col.col-company {
+    width: 22%;
+}
+
+.applications-table col.col-status {
+    width: 13%;
+}
+
+.applications-table col.col-interview {
+    width: 12%;
+}
+
+.applications-table col.col-memo {
+    /* 残り幅（colgroup 上は指定なしだが fixed レイアウト用に min を効かせる） */
+    min-width: 0;
+}
+
+.applications-table col.col-actions {
+    width: 200px;
+}
+
+.applications-table th,
+.applications-table td {
+    padding: 1rem 0.5rem;
+    vertical-align: top;
+}
+
+.applications-table td:nth-child(1) {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.applications-table td:nth-child(2) {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.applications-table td:nth-child(3) {
+    white-space: pre-line;
+    text-align: center;
+    font-size: 0.95rem;
+}
 
 .memo-cell {
-    white-space: pre-wrap !important;
-    display: -webkit-box !important;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
-    overflow: hidden;
-    min-width: 250px;
+    vertical-align: top;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.5;
 }
 
 /* --- ステータスバッジ（色分け） --- */
@@ -154,41 +217,38 @@ select option {
     color: #ffffff;
 }
 
-/* テーブル全体の基本設定：ここを崩さないのがコツです */
-table {
+/* テーブル（フォーム画面など一覧以外）：共通の罫線・セルスタイル */
+table:not(.applications-table) {
     border-collapse: collapse !important;
     width: 100% !important;
-    table-layout: auto !important;
 }
 
-/* 1. セル自体の線は、一旦すべて「完全に」消去する */
-th, td {
+table:not(.applications-table) th,
+table:not(.applications-table) td {
     padding: 1.2rem 0.5rem !important;
     vertical-align: middle !important;
-    border: none !important; /* ← ここで個別の線をすべて殺します */
+    border: none !important;
     background: transparent !important;
 }
 
-/* 2. 行（tr）自体に一本の線を引く。これが真実の一直線です */
+.applications-table th,
+.applications-table td {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* 行（tr）自体に一本の線を引く */
 tr {
     border-bottom: 1px solid rgba(255, 215, 0, 0.4) !important;
 }
 
-/* 3. メモ欄の「箱」の設定 */
-.memo-cell {
-    display: -webkit-box !important;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
-    overflow: hidden;
-    line-height: 1.5;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    height: auto !important;
-}
-
 .memo-cell p {
     margin: 0 0 0.35rem 0;
+    white-space: pre-wrap;
+}
+
+.memo-cell p.history-note {
+    white-space: normal;
 }
 
 .history-note {
@@ -196,6 +256,8 @@ tr {
     padding-left: 0.35rem;
     border-left: 2px solid rgba(255, 215, 0, 0.45);
     font-size: 0.88rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .history-date {
@@ -218,8 +280,11 @@ tr {
 }
 
 /* 操作列（5列目）：ボタンと履歴フォームをセル内に収める */
-td:nth-child(5) {
-    min-width: 240px;
+.applications-table td:nth-child(5),
+.applications-table th:nth-child(5) {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
     text-align: center;
     vertical-align: top;
     white-space: normal !important;

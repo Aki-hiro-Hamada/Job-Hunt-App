@@ -8,10 +8,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container" style="max-width: 560px;">
-    <div class="header">
-        <h1>内定ホイホイ</h1>
-        <p style="margin: 0.5rem 0 0; color: #cbd5e1;">ログインして応募管理を続ける</p>
+<div class="container login-page" style="max-width: 560px;">
+    <div class="header login-header">
+        <h1 class="login-title">内定ホイホイ</h1>
     </div>
 
     <div th:if="${param.registered}" style="margin-bottom: 1rem; color: #34d399;">
@@ -38,11 +37,11 @@
                    style="width: 100%; padding: 0.65rem; border-radius: 10px; border: 1px solid rgba(255,215,0,0.25); background: rgba(15,23,42,0.6); color: #e2e8f0;">
         </div>
 
-        <button type="submit" class="btn" style="width: 100%;">ログイン</button>
+        <button type="submit" class="btn btn-secondary login-main-btn">ログイン</button>
     </form>
 
-    <div style="margin-top: 1rem; text-align: center;">
-        <a th:href="@{/register}" class="btn" style="width: 100%; display: inline-block;">新規登録</a>
+    <div class="login-register-row">
+        <a th:href="@{/register}" class="btn login-register-btn">新規登録</a>
     </div>
 </div>
 </body>
