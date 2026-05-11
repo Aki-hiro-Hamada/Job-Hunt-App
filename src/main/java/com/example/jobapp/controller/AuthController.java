@@ -37,6 +37,10 @@ public class AuthController {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("username", username);
             return "register";
+        } catch (Exception e) {
+            model.addAttribute("error", "登録に失敗しました。時間をおいて再度お試しください。");
+            model.addAttribute("username", username != null ? username : "");
+            return "register";
         }
     }
 }
