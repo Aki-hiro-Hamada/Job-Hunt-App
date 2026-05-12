@@ -389,3 +389,51 @@ tr {
 .company-link:hover {
     color: #fef08a;
 }
+
+/* --- 一覧: ソートボタン --- */
+.applications-table th.th-sort {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.th-sort-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.th-sort-label {
+    font-weight: 800;
+    color: #ffd700;
+}
+
+.sort-btn-group {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+a.sort-btn {
+    display: inline-block;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1.2;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #061c0f;
+    background: rgba(255, 215, 0, 0.35);
+    border: 1px solid rgba(255, 215, 0, 0.65);
+    text-transform: none;
+}
+
+a.sort-btn:hover {
+    background: #ffd700;
+    color: #061c0f;
+}
+
+a.sort-btn.is-active {
+    background: #ffd700;
+    border-color: #fef08a;
+    box-shadow: 0 0 0 1px rgba(217, 4, 41, 0.45);
+}

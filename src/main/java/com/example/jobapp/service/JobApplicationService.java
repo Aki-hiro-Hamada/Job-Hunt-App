@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,17 @@ public class JobApplicationService {
 
     private final JobApplicationRepository repository;
 
-    public List<JobApplication> findAll(String ownerUserId) {
+    /**
+     * @param statusDir {@code asc} または {@code desc}（以外は asc 扱い）
+     * @param dateDir   {@code asc} または {@code desc}（以外は asc 扱い）
+     */
+    public List<JobApplication> findAll(String ownerUserId, String statusDir, String dateDir) {
         // 表示順: 1) ステータス順 2) 日付順（null は最後）
         // MongoDB の Sort だけだと「日本語ステータスの任意順」を表現しづらいので、アプリ側で並べ替える。
         List<JobApplication> list = repository.findAllByOwnerUserId(ownerUserId, Sort.unsorted());
+
+        boolean statusAsc = !"desc".equalsIgnoreCase(normalizeSortDir(statusDir));
+        boolean dateAsc = !"desc".equalsIgnoreCase(normalizeSortDir(dateDir));
 
         List<String> statusOrder = List.of(
                 "応募前",
@@ -42,14 +51,31 @@ public class JobApplicationService {
         Comparator<JobApplication> byStatus = Comparator.comparingInt(app ->
                 statusRank.getOrDefault(app.getStatus(), Integer.MAX_VALUE)
         );
-        Comparator<JobApplication> byDate = Comparator.comparing(
-                JobApplication::getInterviewDate,
-                Comparator.nullsLast(Comparator.naturalOrder())
-        );
+        if (!statusAsc) {
+            byStatus = byStatus.reversed();
+        }
+
+        Comparator<LocalDate> dateKey = dateAsc
+                ? Comparator.nullsLast(Comparator.naturalOrder())
+                : Comparator.nullsLast(Comparator.reverseOrder());
+        Comparator<JobApplication> byDate = Comparator.comparing(JobApplication::getInterviewDate, dateKey);
 
         return list.stream()
                 .sorted(byStatus.thenComparing(byDate))
                 .toList();
+    }
+
+    /** テンプレート・URL 用に asc / desc のみ返す */
+    public String toSortDir(String raw) {
+        return normalizeSortDir(raw);
+    }
+
+    private static String normalizeSortDir(String dir) {
+        if (dir == null) {
+            return "asc";
+        }
+        String t = dir.trim().toLowerCase();
+        return "desc".equals(t) ? "desc" : "asc";
     }
 
     public JobApplication findById(String ownerUserId, String id) {

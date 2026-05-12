@@ -2,6 +2,8 @@ package com.example.jobapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,14 +20,23 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, Environment environment) throws Exception {
+        boolean devProfile = environment.acceptsProfiles(Profiles.of("dev"));
+        boolean listPreview = Boolean.TRUE.equals(
+                environment.getProperty("jobapp.preview-list-without-auth", Boolean.class, false));
+        boolean allowUnauthenticatedList = devProfile || listPreview;
         return http
-                .authorizeHttpRequests(auth -> auth
-                        // POST /register は formLogin().permitAll() の対象外。GET/POST を Ant で明示する。
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/register")).permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/register")).permitAll()
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/register")).permitAll();
+                    auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/register")).permitAll();
+                    auth.requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll();
+                    if (allowUnauthenticatedList) {
+                        auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/applications")).permitAll();
+                        auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/applications/")).permitAll();
+                        auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/applications/api/applications")).permitAll();
+                    }
+                    auth.anyRequest().authenticated();
+                })
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/applications", true)

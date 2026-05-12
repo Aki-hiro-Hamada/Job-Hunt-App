@@ -33,13 +33,41 @@
             <thead>
                 <tr>
                     <th>会社名</th>
-                    <th>ステータス</th>
-                    <th>日付</th>
+                    <th class="th-sort">
+                        <div class="th-sort-inner">
+                            <span class="th-sort-label">ステータス</span>
+                            <span class="sort-btn-group">
+                                <a th:href="@{/applications(statusDir='asc',dateDir=${dateSort})}"
+                                   class="sort-btn"
+                                   th:classappend="${statusSort == 'asc'} ? 'is-active' : ''"
+                                   title="進捗が早い順（応募前→辞退）">昇</a>
+                                <a th:href="@{/applications(statusDir='desc',dateDir=${dateSort})}"
+                                   class="sort-btn"
+                                   th:classappend="${statusSort == 'desc'} ? 'is-active' : ''"
+                                   title="進捗が遅い順（辞退→応募前）">降</a>
+                            </span>
+                        </div>
+                    </th>
+                    <th class="th-sort">
+                        <div class="th-sort-inner">
+                            <span class="th-sort-label">日付</span>
+                            <span class="sort-btn-group">
+                                <a th:href="@{/applications(statusDir=${statusSort},dateDir='asc')}"
+                                   class="sort-btn"
+                                   th:classappend="${dateSort == 'asc'} ? 'is-active' : ''"
+                                   title="面接日が早い順">昇</a>
+                                <a th:href="@{/applications(statusDir=${statusSort},dateDir='desc')}"
+                                   class="sort-btn"
+                                   th:classappend="${dateSort == 'desc'} ? 'is-active' : ''"
+                                   title="面接日が遅い順">降</a>
+                            </span>
+                        </div>
+                    </th>
                     <th>メモ</th>
                     <th>操作</th>
                 </tr>
             </thead>
-            <tbody id="applications-tbody">
+            <tbody id="applications-tbody" th:attr="data-status-sort=${statusSort},data-date-sort=${dateSort}">
                 <tr th:each="app : ${applications}">
                     <td>
                         <a th:href="@{/applications/{id}(id=${app.id})}" th:text="${app.companyName}" class="company-link"></a>
@@ -48,7 +76,13 @@
                         <span class="status-badge" th:text="${app.status}"></span>
                     </td>
 					<!-- 年と月日の間で改行し、日本語形式にする -->
-					<td th:text="${#temporals.format(app.interviewDate, 'yyyy年') + '&#10;' + #temporals.format(app.interviewDate, 'M月d日')}"></td>
+					<td>
+                        <th:block th:if="${app.interviewDate != null}">
+                            <span th:text="${#temporals.format(app.interviewDate, 'yyyy年')}"></span><br/>
+                            <span th:text="${#temporals.format(app.interviewDate, 'M月d日')}"></span>
+                        </th:block>
+                        <th:block th:if="${app.interviewDate == null}">—</th:block>
+                    </td>
 					<td class="memo-cell">
                         <div class="memo-cell-inner"
                              th:if="${(app.memo != null and !#strings.isEmpty(app.memo)) or (app.jobHistories != null and !#lists.isEmpty(app.jobHistories))}">
@@ -92,6 +126,11 @@
 
             if (!tbody) return;
 
+            const sortQuery = () => {
+                const ss = tbody.getAttribute('data-status-sort') || 'asc';
+                const ds = tbody.getAttribute('data-date-sort') || 'asc';
+                return 'statusDir=' + encodeURIComponent(ss) + '&dateDir=' + encodeURIComponent(ds);
+            };
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || '';
             const csrfParam = document.querySelector('meta[name="_csrf_parameter"]')?.getAttribute('content') || '_csrf';
 
@@ -229,7 +268,7 @@
             let timerId = null;
             const refresh = async () => {
                 try {
-                    const res = await fetch('/applications/api/applications', { cache: 'no-store' });
+                    const res = await fetch('/applications/api/applications?' + sortQuery(), { cache: 'no-store' });
                     if (!res.ok) return;
                     const apps = await res.json();
                     render(apps);

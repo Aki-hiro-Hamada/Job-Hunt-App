@@ -3,6 +3,8 @@ package com.example.jobapp.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
@@ -29,12 +32,45 @@ import lombok.RequiredArgsConstructor;
 public class JobApplicationController {
 
     private final JobApplicationService service;
+    private final Environment environment;
+
+    private boolean isListPreviewWithoutAuth() {
+        if (environment.acceptsProfiles(Profiles.of("dev"))) {
+            return true;
+        }
+        return Boolean.TRUE.equals(environment.getProperty("jobapp.preview-list-without-auth", Boolean.class, false));
+    }
 
     @GetMapping
-    public String list(Model model, Principal principal) {
+    public String list(Model model, Principal principal,
+            @RequestParam(defaultValue = "asc") String statusDir,
+            @RequestParam(defaultValue = "asc") String dateDir) {
+        String statusSort = service.toSortDir(statusDir);
+        String dateSort = service.toSortDir(dateDir);
+        model.addAttribute("statusSort", statusSort);
+        model.addAttribute("dateSort", dateSort);
+
+        if (isListPreviewWithoutAuth() && principal == null) {
+            model.addAttribute("applications", List.of());
+            model.addAttribute("ingCount", 0L);
+            return "list";
+        }
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
         String userId = principal.getName();
-        model.addAttribute("applications", service.findAll(userId));
-        model.addAttribute("ingCount", service.getCountByStatus(userId, "書類選考中"));
+        try {
+            model.addAttribute("applications", service.findAll(userId, statusSort, dateSort));
+            model.addAttribute("ingCount", service.getCountByStatus(userId, "書類選考中"));
+        } catch (RuntimeException e) {
+            if (isListPreviewWithoutAuth()) {
+                model.addAttribute("applications", List.of());
+                model.addAttribute("ingCount", 0L);
+            } else {
+                throw e;
+            }
+        }
         return "list";
     }
 
@@ -119,10 +155,31 @@ public class JobApplicationController {
      */
     @GetMapping("/api/applications")
     @ResponseBody
-    public ResponseEntity<List<JobApplication>> apiApplications(Principal principal) {
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.noStore())
-                .body(service.findAll(principal.getName()));
+    public ResponseEntity<List<JobApplication>> apiApplications(Principal principal,
+            @RequestParam(defaultValue = "asc") String statusDir,
+            @RequestParam(defaultValue = "asc") String dateDir) {
+        String statusSort = service.toSortDir(statusDir);
+        String dateSort = service.toSortDir(dateDir);
+        if (isListPreviewWithoutAuth() && principal == null) {
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.noStore())
+                    .body(List.of());
+        }
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        try {
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.noStore())
+                    .body(service.findAll(principal.getName(), statusSort, dateSort));
+        } catch (RuntimeException e) {
+            if (isListPreviewWithoutAuth()) {
+                return ResponseEntity.ok()
+                        .cacheControl(CacheControl.noStore())
+                        .body(List.of());
+            }
+            throw e;
+        }
     }
 
     /**
